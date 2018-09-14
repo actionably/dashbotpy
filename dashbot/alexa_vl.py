@@ -1,69 +1,52 @@
-import os
-import sys
-import os.path
-import json
+from .alexa import Alexa
 
-from .version import __version__
-from . import alexa
 
-class alexa_vl(alexa.alexa):
-    
-    def __init__(self,apiKey=None,debug=False,printErrors=False):
-        
-        if 'DASHBOT_SERVER_ROOT' in os.environ:
-            serverRoot = os.environ['DASHBOT_SERVER_ROOT']
-        else:
-            serverRoot = 'https://tracker.dashbot.io'        
-        self.urlRoot = serverRoot + '/track'        
-        self.apiKey=apiKey
-        self.debug=debug
-        self.printErrors=printErrors
-        self.platform='alexa'
-        self.version = __version__
+class AlexaVL(Alexa):
+    def __init__(self, api_key=None, debug=False, print_errors=False):
+        super(self).__init__()
         self.source = 'pip_vl'
-    
-    #vl initialize     
-    def initialize(self,apiKey,session): 
-        self.apiKey=apiKey
-        self.session=session
-        
-    #vl track    
-    def track(self,intent_name,intent_request,response):
-        event = self.regenerateEvent(intent_request)
-        self.logIncoming(event)
-        self.logOutgoing(event,response)
-        
-    #vl helper
-    def regenerateEvent(self,intent_request):
+
+    # VL initialize
+    def initialize(self, api_key, session):
+        self.api_key = api_key
+        self.session = session
+
+    # VL track
+    def track(self, intent_request, response):
+        event = self.regenerate_event(intent_request)
+        self.log_incoming(event)
+        self.log_outgoing(event, response)
+
+    # VL helper
+    def regenerate_event(self, intent_request):
         event = {
             'session': self.session,
-            'request':intent_request,
-            'context':{
-                'System':{
-                    'application':self.session['application'],
-                    'user':self.session['user']
+            'request': intent_request,
+            'context': {
+                'System': {
+                    'application': self.session['application'],
+                    'user': self.session['user']
                 }
             }
         }
         return event
-    
-    #vl helper
-    def generateResponse(self,speechText):
-        if speechText[0:7]=='<speak>':
-            return {
-                'response':{
-                    'outputSpeech':{
-                        'type':'SSML',
-                        'ssml': speechText
-                    }
-                }       
+
+    # VL helper
+    def generate_response(self, speech_text):
+        if speech_text[0:7] == '<speak>':
+            output_speech = {
+                'type': 'SSML',
+                'ssml': speech_text,
             }
+
         else:
-            return {
-                'response':{
-                    'outputSpeech':{
-                        'type':'Plaintext',
-                        'text':speechText
-                    }
-                }
+            output_speech = {
+                'text': speech_text,
+                'type': 'Plaintext',
             }
+
+        return {
+            'response': {
+                'outputSpeech': output_speech
+            }
+        }
