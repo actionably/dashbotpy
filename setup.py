@@ -1,5 +1,4 @@
-
-from setuptools import setup
+from setuptools import setup, find_packages
 from codecs import open
 from os import path
 
@@ -10,7 +9,15 @@ here = path.abspath(path.dirname(__file__))
 # Get the long description from the README file
 with open(path.join(here, 'README'), encoding='utf-8') as f:
     long_description = f.read()
- 
+
+
+install_requires = [
+    'requests',
+    'dpath',
+    'flatten-dict'
+]
+
+
 setup(
     name='dashbot',
   
@@ -45,11 +52,11 @@ setup(
     # What does your project relate to?
     keywords='dashbot, alexasdk, skill',
   
-    packages=['dashbot'],
+    packages=find_packages(),
   
     # List run-time dependencies here.  These will be installed by pip when
     # your project is installed. 
-    install_requires=['requests'],
+    install_requires=install_requires,
   
   
 )

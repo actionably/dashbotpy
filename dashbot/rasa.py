@@ -1,11 +1,12 @@
 from .version import __version__
 from . import generic
+from . import redactor
 
 import json
 import os
 
 class rasa(generic.generic):
-    def __init__(self, apiKey,debug=False, printErrors=False, proxies=None):
+    def __init__(self, apiKey,debug=False, printErrors=False, proxies=None, config=dict()):
         if 'DASHBOT_SERVER_ROOT' in os.environ:
             serverRoot = os.environ['DASHBOT_SERVER_ROOT']
         else:
@@ -18,8 +19,12 @@ class rasa(generic.generic):
         self.version = __version__
         self.source = 'pip'
         self.proxies = proxies
+        self.config = config
 
     def logIncoming(self, data):
+        redact = self.config.get('redact')
+        if redact: data = redactor.redact(data)
+
         url = self.urlRoot + '?apiKey=' + self.apiKey + '&type=incoming&platform=' + self.platform + '&v=' + self.version + '-' + self.source
 
         if self.debug:
@@ -29,6 +34,9 @@ class rasa(generic.generic):
         self.makeRequest(url, 'POST', data, proxies=self.proxies)
 
     def logOutgoing(self, data):
+        redact = self.config.get('redact')
+        if redact: data = redactor.redact(data)
+
         url = self.urlRoot + '?apiKey=' + self.apiKey + '&type=outgoing&platform=' + self.platform + '&v=' + self.version + '-' + self.source
 
         if self.debug:
