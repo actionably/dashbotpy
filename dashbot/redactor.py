@@ -38,7 +38,8 @@ PATH_DESCRIPTIONS = [
     ['message', 'text'],
 
     # rasa
-    ['text']
+    ['text'],
+    ['parse_data', 'text']
 ]
 
 
