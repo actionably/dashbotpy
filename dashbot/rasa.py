@@ -38,7 +38,7 @@ class rasa(generic.generic):
         self.makeRequest(url, 'POST', data, proxies=self.proxies)
 
     @classmethod
-    def from_endpoint_config(
+    async def from_endpoint_config(
         cls, broker_config
     ):
         if broker_config is None:
